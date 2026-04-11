@@ -10,9 +10,6 @@ import difflib
 url = "https://discord.com/api/applications/detectable"
 gamelist = requests.get(url).json()
 
-def sanitize_name(name):
-    return re.sub(r'[<>:"/\\|?*]', '', name).strip()
-
 def menu():
     print(banner)
     print(" [1] Start Questify")
@@ -32,53 +29,74 @@ def start_questify():
         if app["name"]:
             names.append(app["name"])
 
-    gselect = input("Select game: ").strip().lower()
-    matches = difflib.get_close_matches(gselect, names, n=10, cutoff=0.4)
+    while True:
+        gselect = input("Select game (0 to go back): ").strip().lower()
 
-    if len(matches) == 0:
-        print("No matches.")
+        if gselect == "0":
+            return
+
+        matches = difflib.get_close_matches(gselect, names, n=10, cutoff=0.4)
+
+        if len(matches) == 0:
+            print("No matches.")
+            continue
+
+        i = 1
+        for name in matches:
+            print(f"[{i}] --> {name}")
+            i = i + 1
+
+        sel_raw = input("Select number (0 to search again): ")
+
+        if not sel_raw.isdigit():
+            print("Invalid.")
+            continue
+
+        sel = int(sel_raw)
+
+        if sel == 0:
+            continue
+
+        if sel > len(matches):
+            print("Invalid.")
+            continue
+
+        selected_name = matches[sel - 1]
+        print("Selected:", selected_name)
+
+        exename = None
+        for app in gamelist:
+            if app["name"] == selected_name:
+                for exe in app["executables"]:
+                    if exe["os"] == "win32" and exe["is_launcher"] == False:
+                        exename = exe["name"]
+                        break
+
+        if exename is None:
+            print("No Windows executable found.")
+            continue
+
+        src = "questify.exe"
+
+        safe_name = re.sub(r'[<>:"/\\|?*]', '', selected_name).strip()
+        parts = exename.split("/")
+        exe_file = parts[-1]
+
+        folder = safe_name
+        index = 0
+        while index < len(parts) - 1:
+            folder = os.path.join(folder, parts[index])
+            index = index + 1
+
+        os.makedirs(folder, exist_ok=True)
+        dst = os.path.join(folder, exe_file)
+        shutil.copy(src, dst)
+
+        print("\nInstalled:")
+        print(dst)
+        print("Run this exe to launch Questify.")
+        time.sleep(10)
         return
-
-    i = 1
-    for name in matches:
-        print(f"[{i}] --> {name}")
-        i = i + 1
-
-    sel = int(input("Select number: "))
-    selected_name = matches[sel - 1]
-    print("Selected:", selected_name)
-
-    exename = None
-    for app in gamelist:
-        if app["name"] == selected_name:
-            for exe in app["executables"]:
-                if exe["os"] == "win32" and exe["is_launcher"] == False:
-                    exename = exe["name"]
-                    break
-
-    if exename is None:
-        print("No Windows executable found.")
-        return
-
-    src = "questify.exe"
-
-    safe_name = sanitize_name(selected_name)
-    parts = exename.split("/")
-    exe_file = parts[-1]
-    subfolders = parts[:-1]
-
-    folder = safe_name
-    for sub in subfolders:
-        folder = os.path.join(folder, sub)
-
-    os.makedirs(folder, exist_ok=True)
-    dst = os.path.join(folder, exe_file)
-    shutil.copy(src, dst)
-
-    print("\nInstalled:")
-    print(dst)
-    print("Run this exe to launch Questify.")
-    time.sleep(10)
 
 def timer():
     total = 15 * 60 + 30
