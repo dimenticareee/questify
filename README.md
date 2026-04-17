@@ -39,6 +39,15 @@ with a matching folder name so Discord detects it as a running game.
 
 ---
 
+## Warning
+
+> **Important**
+> The executable must be named `questify.exe`.
+> Any other name will cause the program to not work correctly.
+
+
+---
+
 ## Installation
 
 ### Download (recommended)
@@ -74,14 +83,3 @@ dist/questify.exe
 ```
 
 Run it like any normal program.
-
----
-
-## Warning
-
-> **Important**
-> The executable must be named `questify.exe`.
-> Any other name will cause the program to not work correctly.
-
-
-
