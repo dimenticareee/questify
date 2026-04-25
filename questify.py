@@ -7,11 +7,28 @@ import requests
 import webbrowser
 import difflib
 
+VERSION = "3.1"
+GITHUB_REPO = "orqz/questify"
+
 url = "https://discord.com/api/applications/detectable"
 gamelist = requests.get(url).json()
 
+def check_version():
+    try:
+        r = requests.get(f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest", timeout=5)
+        if r.status_code != 200:
+            return
+        latest = r.json().get("tag_name", "").lstrip("v")
+        if latest and latest != VERSION:
+            print(f"\n  [!] Update available: v{latest} (you have v{VERSION})")
+            print(f"  --> https://github.com/{GITHUB_REPO}/releases/latest")
+            input("\n  Press Enter to continue anyway... ")
+    except Exception:
+        pass
+
 def menu():
     print(banner)
+    check_version()
     print(" [1] Start Questify")
     print(" [2] Discord Server")
     print(" [3] Exit")
@@ -35,7 +52,13 @@ def start_questify():
         if gselect == "0":
             return
 
-        matches = difflib.get_close_matches(gselect, names, n=10, cutoff=0.4)
+        q = gselect
+        exact   = [n for n in names if n.lower() == q]
+        starts  = [n for n in names if n.lower().startswith(q) and n not in exact]
+        contains = [n for n in names if q in n.lower() and n not in exact and n not in starts]
+        rest    = [n for n in names if n not in exact and n not in starts and n not in contains]
+        fuzzy   = difflib.get_close_matches(q, rest, n=10, cutoff=0.45)
+        matches = (exact + starts + contains + fuzzy)[:15]
 
         if len(matches) == 0:
             print("No matches.")
