@@ -14,8 +14,8 @@
 
 <!-- Badges -->
 <p align="center">
-  <img src="https://img.shields.io/github/v/release/orqz/questify?style=for-the-badge&cacheSeconds=3600">
-  <img src="https://img.shields.io/github/downloads/orqz/questify/total?style=for-the-badge&cacheSeconds=86400&v=2">
+  <img src="https://img.shields.io/github/v/release/dimenticareee/questify?style=for-the-badge&cacheSeconds=3600">
+  <img src="https://img.shields.io/github/downloads/dimenticareee/questify/total?style=for-the-badge&cacheSeconds=86400&v=2">
   <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge">
   <img src="https://img.shields.io/badge/python-3.10+-blue?style=for-the-badge">
 </p>
@@ -26,60 +26,20 @@
 
 ## About
 
-Questify is a simple Python tool that generates a custom `.exe`
-with a matching folder name so Discord detects it as a running game.
+Questify is now reworked to simulate running games
+processes to easily complete discord quests.
 
----
 
 ## Features
 
-- creates an exe
-- creates the folder
-- what else do u expect?
+- search a game and run it
+- check current processes and alive time
+- kill processes once done
 
----
-
-## Warning
-
-> **Important**
-> The executable must be named `questify.exe`.
-> Any other name will cause the program to not work correctly.
-
-
----
 
 ## Installation
 
-### Download (recommended)
+Download and run  `questify.py` from source.
 
-Download the latest ready-to-use `.exe` from [Releases](https://github.com/orqz/questify/releases):
+>Dependencies will be automatically installed, if you encounter any problems you can manually install them by `requirements.txt`.
 
-No setup required. Just download and run.
-
----
-
-### Don’t trust the `.exe`? (fair i wouldnt either)
-
-You can compile the source yourself using PyInstaller.
-
-### Step 1 — Install dependencies
-
-```bash
-pip install requests pyinstaller
-```
-
-### Step 2 — Build the executable
-
-```bash
-pyinstaller --onefile questify.py
-```
-
-### Step 3 — Done
-
-Your compiled file will be created here:
-
-```
-dist/questify.exe
-```
-
-Run it like any normal program.

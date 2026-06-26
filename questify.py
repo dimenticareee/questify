@@ -5,6 +5,7 @@ import requests
 import difflib
 import multiprocessing
 import setproctitle
+import subprocess
 
 url = "https://discord.com/api/applications/detectable"
 try:
@@ -144,7 +145,21 @@ def menu():
         kill_all(active_processes)
         sys.exit(0)
 
+def install_requirements():
+    try:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
+        print("[+] Dipendenze installate correttamente.")
+    except subprocess.CalledProcessError:
+        print("[!] Errore durante l'installazione delle dipendenze.")
+        sys.exit(1)
+
 if __name__ == "__main__":
-    # Necessario per Windows quando si usa multiprocessing
-    multiprocessing.freeze_support()
-    menu()
+    while True:
+        try:
+            import requests
+            import setproctitle
+            multiprocessing.freeze_support()
+            menu()
+        except ImportError:
+            print("[*] Alcune librerie mancano. Installazione in corso...")
+            install_requirements()
